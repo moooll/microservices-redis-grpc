@@ -18,11 +18,16 @@ func main() {
 	rdb := redis.Connect(cfg.RedisURI)
 	var streams []string
 	streams = append(streams, "prices")
+	streams = append(streams, "$")
 	client := redis.NewRedisClient(context.Background(), rdb, streams)
 	go func ()  {
-		er := client.Read()
-		if er != nil {
-			log.Errorln("error reading from redis streams:" , er.Error())
+		for {
+			er := client.Read()
+			if er != nil {
+				log.Errorln("error reading from redis streams:" , er.Error())
+			}
 		}
 	}()
+	wait := make(chan bool)
+	<-wait
 }

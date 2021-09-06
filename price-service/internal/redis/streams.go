@@ -41,11 +41,13 @@ func Connect(redisURI string) *redis.Client {
 func (client *RedisClient) Read() error {
 	a, err := client.client.XRead(&redis.XReadArgs{
 		Streams: client.stream,
+		
 	}).Result()
 
 	if err != nil {
 		return err
 	}
+
 	for _, v := range a {
 		log.Info(v.Messages)
 	}

@@ -33,10 +33,13 @@ func Connect(redisURI string) *redis.Client {
 
 // Write writes generated price to Redis Streams
 func (c *RedisClient) Write(price models.Price) error {
+	id := price.ID.String()
+	val := make(map[string]models.Price)
+	val[id] = price
 	err := c.client.XAdd(c.ctx, &redis.XAddArgs{
 		Stream: c.streamName,
-		ID:     price.ID.String(),
-		Values: price,
+		ID:     price.CompanyName,
+		Values: val,
 	}).Err()
 	if err != nil {
 		return err

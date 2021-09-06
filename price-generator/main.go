@@ -1,6 +1,7 @@
 package main
 
 import (
+	"time"
 	"context"
 	"price-generator/internal/config"
 	"price-generator/internal/generator"
@@ -13,15 +14,34 @@ import (
 func main() {
 	cfg := config.Config{}
 	if err := env.Parse(&cfg); err != nil {
-		log.Errorln("error parsing config: ", err.Error())
+		log.Error("error parsing config: ", err.Error())
 	}
 
 	rdb := redis.Connect(cfg.RedisURI)
 	redisClient := redis.NewRedisClient(context.Background(), rdb, "prices")
-	// todo: remove hardcode
-	generatedPrice := generator.GeneratePrice("apple")
-	er := redisClient.Write(generatedPrice)
-	if er != nil {
-		log.Errorln("error writing to redis: ", er.Error())
-	}
+	go func() {
+		for {
+			applePrice := generator.GeneratePrice("apple")
+			er := redisClient.Write(applePrice)
+			if er != nil {
+				log.Error("error writing to redis: ", er.Error())
+			}
+
+			time.Sleep(10 * time.Second)
+			msPrice := generator.GeneratePrice("microsoft")
+			erro := redisClient.Write(msPrice)
+			if erro != nil {
+				log.Error("error writing to redis: ", erro.Error())
+			}
+
+			time.Sleep(10 * time.Second)
+			sonyPrice := generator.GeneratePrice("sony")
+			e := redisClient.Write(sonyPrice)
+			if e != nil {
+				log.Error("error writing to redis: ", e.Error())
+			}
+		}
+	}() 
+	wait := make(chan bool)
+	<-wait
 }
