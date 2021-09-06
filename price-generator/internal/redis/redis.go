@@ -1,3 +1,4 @@
+// Package redis contains tools for connecting and reading from Redis
 package redis
 
 import (
@@ -9,16 +10,16 @@ import (
 	redis "github.com/go-redis/redis/v8"
 )
 
-// RedisClient describes client for writing to Redis Streams
-type RedisClient struct {
+// Client describes client for writing to Redis Streams
+type Client struct {
 	client     *redis.Client
 	ctx        context.Context
 	streamName string
 }
 
-// NewRedisClient returns new redis client
-func NewRedisClient(ctx context.Context, client *redis.Client, streamName string) *RedisClient {
-	return &RedisClient{
+// NewClient returns new redis client
+func NewClient(ctx context.Context, client *redis.Client, streamName string) *Client {
+	return &Client{
 		client:     client,
 		ctx:        ctx,
 		streamName: streamName,
@@ -34,7 +35,7 @@ func Connect(redisURI string) *redis.Client {
 }
 
 // Write writes generated price to Redis Streams
-func (c *RedisClient) Write(price models.Price) error {
+func (c *Client) Write(price models.Price) error {
 	val := map[string]interface{}{"price": fmt.Sprint(price)}
 	err := c.client.XAdd(c.ctx, &redis.XAddArgs{
 		Stream: c.streamName,

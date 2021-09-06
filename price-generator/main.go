@@ -19,7 +19,7 @@ func main() {
 	}
 
 	rdb := redis.Connect(cfg.RedisURI)
-	redisClient := redis.NewRedisClient(context.Background(), rdb, "prices")
+	redisClient := redis.NewClient(context.Background(), rdb, "prices")
 	go func() {
 		for {
 			applePrice := generator.GeneratePrice("apple")

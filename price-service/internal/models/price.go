@@ -1,3 +1,4 @@
+// Package models contains models of the domain
 package models
 
 import "github.com/google/uuid"

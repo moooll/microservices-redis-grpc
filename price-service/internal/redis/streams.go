@@ -1,3 +1,4 @@
+// Package redis contains tools for connecting and reading from Redis
 package redis
 
 import (
@@ -9,14 +10,16 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type RedisClient struct {
+// Client is used to work with unexported Redis client from other packages
+type Client struct {
 	client *redis.Client
 	ctx    context.Context
 	stream []string
 }
 
-func NewRedisClient(ctx context.Context, client *redis.Client, stream []string) *RedisClient {
-	return &RedisClient{
+// NewClient connects to Redis and returns client
+func NewClient(ctx context.Context, client *redis.Client, stream []string) *Client {
+	return &Client{
 		ctx:    ctx,
 		client: client,
 		stream: stream,
@@ -32,16 +35,8 @@ func Connect(redisURI string) *redis.Client {
 	return client
 }
 
-// func CreateConsumerGroup(c *redis.Client, stream string, start string) error {
-// 	err := c.XGroupCreate(stream, "gc-1", "0").Err()
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	return nil
-// }
-
-func (client *RedisClient) Read() error {
+// Read reads messages from Redis Streams
+func (client *Client) Read() error {
 	a, err := client.client.XRead(&redis.XReadArgs{
 		Streams: client.stream,
 	}).Result()

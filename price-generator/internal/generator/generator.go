@@ -1,3 +1,4 @@
+// Package generator produces generated prices for the shares
 package generator
 
 import (

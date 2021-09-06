@@ -17,9 +17,8 @@ func main() {
 
 	rdb := redis.Connect(cfg.RedisURI)
 	var streams []string
-	streams = append(streams, "prices")
-	streams = append(streams, "$")
-	client := redis.NewRedisClient(context.Background(), rdb, streams)
+	streams = append(streams, "prices", "$")
+	client := redis.NewClient(context.Background(), rdb, streams)
 	go func() {
 		for {
 			er := client.Read()
