@@ -4,7 +4,10 @@ import (
 	"context"
 
 	"github.com/go-redis/redis"
-	log "github.com/sirupsen/logrus")
+	"github.com/moooll/microservices-redis-grpc/price-service/internal/models"
+	"github.com/pquerna/ffjson/ffjson"
+	log "github.com/sirupsen/logrus"
+)
 
 type RedisClient struct {
 	client *redis.Client
@@ -41,7 +44,6 @@ func Connect(redisURI string) *redis.Client {
 func (client *RedisClient) Read() error {
 	a, err := client.client.XRead(&redis.XReadArgs{
 		Streams: client.stream,
-		
 	}).Result()
 
 	if err != nil {
@@ -49,7 +51,15 @@ func (client *RedisClient) Read() error {
 	}
 
 	for _, v := range a {
-		log.Info(v.Messages)
+		for _, f := range v.Messages {
+			var price models.Price
+			er := ffjson.Unmarshal([]byte(f.Values["price"].(string)), &price)
+			if er != nil {
+				return er
+			}
+
+			log.Info(price)
+		}
 	}
 
 	return nil

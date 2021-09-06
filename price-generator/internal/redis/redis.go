@@ -2,7 +2,9 @@ package redis
 
 import (
 	"context"
-	"price-generator/internal/models"
+	"fmt"
+
+	"github.com/moooll/microservices-redis-grpc/price-generator/internal/models"
 
 	redis "github.com/go-redis/redis/v8"
 )
@@ -17,8 +19,8 @@ type RedisClient struct {
 // NewRedisClient returns new redis client
 func NewRedisClient(ctx context.Context, client *redis.Client, streamName string) *RedisClient {
 	return &RedisClient{
-		client: client,
-		ctx: ctx,
+		client:     client,
+		ctx:        ctx,
 		streamName: streamName,
 	}
 }
@@ -33,12 +35,10 @@ func Connect(redisURI string) *redis.Client {
 
 // Write writes generated price to Redis Streams
 func (c *RedisClient) Write(price models.Price) error {
-	id := price.ID.String()
-	val := make(map[string]models.Price)
-	val[id] = price
+	val := map[string]interface{}{"price": fmt.Sprint(price)}
 	err := c.client.XAdd(c.ctx, &redis.XAddArgs{
 		Stream: c.streamName,
-		ID:     price.CompanyName,
+		ID:     "",
 		Values: val,
 	}).Err()
 	if err != nil {

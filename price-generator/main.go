@@ -1,11 +1,12 @@
 package main
 
 import (
-	"time"
 	"context"
-	"price-generator/internal/config"
-	"price-generator/internal/generator"
-	"price-generator/internal/redis"
+	"time"
+
+	"github.com/moooll/microservices-redis-grpc/price-generator/internal/config"
+	"github.com/moooll/microservices-redis-grpc/price-generator/internal/generator"
+	"github.com/moooll/microservices-redis-grpc/price-generator/internal/redis"
 
 	"github.com/caarlos0/env/v6"
 	log "github.com/sirupsen/logrus"
@@ -41,7 +42,7 @@ func main() {
 				log.Error("error writing to redis: ", e.Error())
 			}
 		}
-	}() 
+	}()
 	wait := make(chan bool)
 	<-wait
 }
