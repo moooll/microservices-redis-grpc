@@ -1,0 +1,6 @@
+price-generator/.env
+price-generator/.vscode
+price-service/.env
+price-service/.vscode
+.DS_Store
+.golangci
