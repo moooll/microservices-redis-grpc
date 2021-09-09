@@ -2,7 +2,9 @@
 package grpc
 
 import (
-	pb "github.com/moooll/microservices-redis-grpc/price-service/protocol"
+	pb "github.com/moooll/microservices-redis-grpc/price-service/protocol feature/grpc"  
 )
 
-func getPrices(client pb.PriceService_StreamPriceClient)
+func getPrices(client pb.PriceService_StreamPriceClient) {
+
+}
