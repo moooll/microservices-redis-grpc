@@ -5,6 +5,7 @@ import (
 
 	"github.com/caarlos0/env/v6"
 	"github.com/moooll/microservices-redis-grpc/price-service/internal/config"
+	"github.com/moooll/microservices-redis-grpc/price-service/internal/models"
 	"github.com/moooll/microservices-redis-grpc/price-service/internal/redis"
 	log "github.com/sirupsen/logrus"
 )
@@ -19,9 +20,10 @@ func main() {
 	var streams []string
 	streams = append(streams, "prices", "$")
 	client := redis.NewClient(context.Background(), rdb, streams)
+	c := make(chan models.Price)
 	go func() {
 		for {
-			er := client.Read()
+			er := client.Read(c)
 			if er != nil {
 				log.Errorln("error reading from redis streams:", er.Error())
 			}

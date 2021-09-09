@@ -7,7 +7,6 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/moooll/microservices-redis-grpc/price-service/internal/models"
 	"github.com/pquerna/ffjson/ffjson"
-	log "github.com/sirupsen/logrus"
 )
 
 // Client is used to work with unexported Redis client from other packages
@@ -36,7 +35,7 @@ func Connect(redisURI string) *redis.Client {
 }
 
 // Read reads messages from Redis Streams
-func (client *Client) Read() error {
+func (client *Client) Read(c chan models.Price) error {
 	a, err := client.client.XRead(&redis.XReadArgs{
 		Streams: client.stream,
 	}).Result()
@@ -53,7 +52,7 @@ func (client *Client) Read() error {
 				return er
 			}
 
-			log.Info(price)
+			c <- price
 		}
 	}
 

@@ -7,6 +7,8 @@ require (
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/onsi/gomega v1.16.0 // indirect
-	github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7 // indirect
+	github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7
 	github.com/sirupsen/logrus v1.8.1
+	google.golang.org/grpc v1.40.0
+	google.golang.org/protobuf v1.27.1
 )
