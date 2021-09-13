@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 
+	"github.com/moooll/microservices-redis-grpc/position-service/internal/grpc/client"
 	"github.com/moooll/microservices-redis-grpc/position-service/internal/models"
 	"github.com/moooll/microservices-redis-grpc/position-service/internal/pnl"
 	pb "github.com/moooll/microservices-redis-grpc/position-service/protocol"
@@ -10,20 +11,34 @@ import (
 
 type ProfitAndLoss struct {
 	C chan models.Price
+	pb.UnimplementedProfitAndLossServer
+	cl client.PriceServiceClient
 }
 
-func (p ProfitAndLoss) GetProfitAndLoss(ctx context.Context, req *pb.ProfitAndLossRequest) *pb.ProfitAndLossResponse {
-	generatedPrice := <- p.C
-	switch pb.ProfitAndLossRequestPosition_name {
-	case "OPEN":
-		return getPnLForOpen(req, generatedPrice)
-	case "CLOSE":
-		return getPnLForClosed(req)
-	case "UNDEF":
-		return &pb.ProfitAndLossResponse{}
+// NewProfitAndLoss returns new ProfitAndLoss instance
+func NewProfitAndLoss(cl pb.PriceServiceClient) (p ProfitAndLoss) {
+	return ProfitAndLoss{
+		cl: cl,
+	}
+}
+
+func (p ProfitAndLoss) GetProfitAndLoss(ctx context.Context, req *pb.ProfitAndLossRequest) (*pb.ProfitAndLossResponse, error) {
+	generatedPrice, err := p.cl.GetLatestPrice()
+	if err != nil {
+		return &pb.ProfitAndLossResponse{}, err
 	}
 
-	return &pb.ProfitAndLossResponse{}
+	var key string
+	switch pb.ProfitAndLossRequestPosition_value[key] {
+	case pb.ProfitAndLossRequestPosition_value["OPEN"]:
+		return getPnLForOpen(req, generatedPrice), nil
+	case pb.ProfitAndLossRequestPosition_value["CLOSE"]:
+		return getPnLForClosed(req), nil
+	case pb.ProfitAndLossRequestPosition_value["UNDEF"]:
+		return &pb.ProfitAndLossResponse{}, nil
+	}
+
+	return &pb.ProfitAndLossResponse{}, nil
 }
 
 func getPnLForOpen(req *pb.ProfitAndLossRequest, generatedPrice models.Price) *pb.ProfitAndLossResponse {
