@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"net"
-	"net/rpc"
 
 	"github.com/caarlos0/env"
 	"github.com/moooll/microservices-redis-grpc/position-service/internal/config"
