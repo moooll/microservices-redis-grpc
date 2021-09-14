@@ -3,10 +3,11 @@ package server
 import (
 	"context"
 
-	"github.com/moooll/microservices-redis-grpc/position-service/internal/grpc/client"
+	"github.com/moooll/microservices-redis-grpc/position-service/grpc/client"
 	"github.com/moooll/microservices-redis-grpc/position-service/internal/models"
 	pb "github.com/moooll/microservices-redis-grpc/position-service/protocol"
-	"google.golang.org/grpc/internal"
+	// pbclient "github.com/moooll/microservices-redis-grpc/price-service/protocol"
+	"github.com/moooll/microservices-redis-grpc/position-service/internal"
 )
 
 type ProfitAndLoss struct {
@@ -16,7 +17,7 @@ type ProfitAndLoss struct {
 }
 
 // NewProfitAndLoss returns new ProfitAndLoss instance
-func NewProfitAndLoss(cl pb.PriceServiceClient) (p ProfitAndLoss) {
+func NewProfitAndLoss(cl client.PriceServiceClient) (p ProfitAndLoss) {
 	return ProfitAndLoss{
 		cl: cl,
 	}
@@ -34,8 +35,6 @@ func (p ProfitAndLoss) GetProfitAndLoss(ctx context.Context, req *pb.ProfitAndLo
 		return getPnLForOpen(req, generatedPrice), nil
 	case pb.ProfitAndLossRequestPosition_value["CLOSE"]:
 		return getPnLForClosed(req), nil
-		// case pb.ProfitAndLossRequestPosition_value["UNDEF"]:
-		// 	return &pb.ProfitAndLossResponse{}, nil
 	}
 
 	return &pb.ProfitAndLossResponse{}, nil

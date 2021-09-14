@@ -5,8 +5,9 @@ import (
 	"net"
 
 	"github.com/caarlos0/env"
+	rpc "github.com/moooll/microservices-redis-grpc/position-service/grpc"
 	"github.com/moooll/microservices-redis-grpc/position-service/internal/config"
-	rpc "github.com/moooll/microservices-redis-grpc/position-service/internal/grpc"
+	pbserver "github.com/moooll/microservices-redis-grpc/position-service/protocol"
 	pb "github.com/moooll/microservices-redis-grpc/price-service/protocol"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -26,7 +27,6 @@ func main() {
 		}
 	}()
 
-
 	// goroutine
 	er := rpc.GetPrice(context.Background(), client)
 	if er != nil {
@@ -34,7 +34,7 @@ func main() {
 	}
 
 	var wait chan struct{}
-	<- wait 
+	<-wait
 }
 
 func grpcClientConnect(grpcAddr string) pb.PriceServiceClient {
@@ -60,7 +60,7 @@ func launchGRPCServer(port string, client pb.PriceServiceClient) error {
 
 	s := grpc.NewServer()
 	server := rpc.NewProfitAndLoss(client)
-	pb.RegisterPriceServiceServer(s, server)
+	pbserver.RegisterProfitAndLossServer(s, server)
 	if er := s.Serve(lis); er != nil {
 		return er
 	}

@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/moooll/microservices-redis-grpc/position-service/internal/models"
-	pb "github.com/moooll/microservices-redis-grpc/price-service/protocol"
+	pbclient "github.com/moooll/microservices-redis-grpc/price-service/protocol"
 )
 
 type PriceServiceClient struct {
@@ -17,10 +17,10 @@ type PriceServiceClient struct {
 	Mu          *sync.Mutex
 }
 
-func (p *PriceServiceClient) GetPrice(ctx context.Context, client pb.PriceServiceClient) error {
+func (p *PriceServiceClient) GetPrice(ctx context.Context, client pbclient.PriceServiceClient) error {
 	var recievedPrice models.Price
 
-	stream, err := client.StreamPrice(ctx, &pb.PriceRequest{})
+	stream, err := client.StreamPrice(ctx, &pbclient.PriceRequest{})
 	if err != nil {
 		return err
 	}
