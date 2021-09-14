@@ -52,3 +52,7 @@ func (p *PriceReciever) GetPrices(ctx context.Context, client pb.PriceServiceCli
 	}
 	return nil
 }
+
+func RecievePrice() models.Price {
+	// read latest price from map
+}

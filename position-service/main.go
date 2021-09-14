@@ -26,10 +26,15 @@ func main() {
 		}
 	}()
 
+
+	// goroutine
 	er := rpc.GetPrice(context.Background(), client)
 	if er != nil {
 		log.Error("error parsing config: ", er.Error())
 	}
+
+	var wait chan struct{}
+	<- wait 
 }
 
 func grpcClientConnect(grpcAddr string) pb.PriceServiceClient {
