@@ -47,7 +47,8 @@ func (client *Client) Read(c chan models.Price) error {
 	for _, v := range a {
 		for _, f := range v.Messages {
 			var price models.Price
-			er := ffjson.Unmarshal([]byte(f.Values["price"].(string)), &price)
+			p := f.Values["price"].(string)
+			er := ffjson.Unmarshal([]byte(p), &price)
 			if er != nil {
 				return er
 			}

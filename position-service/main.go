@@ -5,7 +5,8 @@ import (
 	"net"
 
 	"github.com/caarlos0/env"
-	rpc "github.com/moooll/microservices-redis-grpc/position-service/grpc"
+	rpc "github.com/moooll/microservices-redis-grpc/position-service/communication/client"
+	rpcserver "github.com/moooll/microservices-redis-grpc/position-service/communication/server"
 	"github.com/moooll/microservices-redis-grpc/position-service/internal/config"
 	pbserver "github.com/moooll/microservices-redis-grpc/position-service/protocol"
 	pb "github.com/moooll/microservices-redis-grpc/price-service/protocol"
@@ -19,29 +20,7 @@ func main() {
 		log.Error("error parsing config: ", err.Error())
 	}
 
-	client := grpcClientConnect(cfg.GRPCClientAddr)
-
-	go func() {
-		if er := launchGRPCServer(cfg.GRPCServerPort, client); er != nil {
-			log.Error("error launching gRPC server: ", er.Error())
-		}
-	}()
-
-	// goroutine
-	er := rpc.GetPrice(context.Background(), client)
-	if er != nil {
-		log.Error("error parsing config: ", er.Error())
-	}
-
-	var wait chan struct{}
-	<-wait
-}
-
-func grpcClientConnect(grpcAddr string) pb.PriceServiceClient {
-	conn, er := grpc.Dial(grpcAddr, grpc.WithInsecure())
-	if er != nil {
-		log.Error("error parsing config: ", er.Error())
-	}
+	conn, client := grpcClientConnect(cfg.GRPCClientAddr)
 
 	defer func() {
 		if e := conn.Close(); e != nil {
@@ -49,17 +28,40 @@ func grpcClientConnect(grpcAddr string) pb.PriceServiceClient {
 		}
 	}()
 
-	return pb.NewPriceServiceClient(conn)
+	cl := rpc.NewGetPriceService()
+	go func() {
+		if er := launchGRPCServer(cfg.GRPCServerPort, *cl); er != nil {
+			log.Error("error launching gRPC server: ", er.Error())
+		}
+	}()
+
+
+	er := cl.GetPrice(context.Background(), client)
+ 	if er != nil {
+		log.Error("error parsing config: ", er.Error())
+	}
+
+	var wait chan struct{}
+	<-wait
 }
 
-func launchGRPCServer(port string, client pb.PriceServiceClient) error {
+func grpcClientConnect(grpcAddr string) (*grpc.ClientConn, pb.PriceServiceClient) {
+	conn, er := grpc.Dial(grpcAddr, grpc.WithInsecure())
+	if er != nil {
+		log.Error("error parsing config: ", er.Error())
+	}
+
+	return conn, pb.NewPriceServiceClient(conn)
+}
+
+func launchGRPCServer(port string, g rpc.GetPriceService) error {
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		return err
 	}
 
 	s := grpc.NewServer()
-	server := rpc.NewProfitAndLoss(client)
+	server := rpcserver.NewProfitAndLoss(g)
 	pbserver.RegisterProfitAndLossServer(s, server)
 	if er := s.Serve(lis); er != nil {
 		return er

@@ -3,9 +3,9 @@ package redis
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/moooll/microservices-redis-grpc/price-generator/internal/models"
+	"github.com/pquerna/ffjson/ffjson"
 
 	redis "github.com/go-redis/redis/v8"
 )
@@ -36,7 +36,12 @@ func Connect(redisURI string) *redis.Client {
 
 // Write writes generated price to Redis Streams
 func (c *Client) Write(price models.Price) error {
-	val := map[string]interface{}{"price": fmt.Sprint(price)}
+	p, er := ffjson.Marshal(price)
+	if er != nil {
+		return er
+	}
+
+	val := map[string]interface{}{"price": p}
 	err := c.client.XAdd(c.ctx, &redis.XAddArgs{
 		Stream: c.streamName,
 		ID:     "",

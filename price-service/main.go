@@ -24,36 +24,40 @@ func main() {
 		log.Error("error parsing config: ", err.Error())
 	}
 
+	// redisConnect
 	rdb := redis.Connect(cfg.RedisURI)
 	var streams []string
 	streams = append(streams, "prices", "$")
 	client := redis.NewClient(context.Background(), rdb, streams)
-	c := make(chan models.Price)
+	fromRedis := make(chan models.Price)
+	ps := rpc.NewPriceStream(fromRedis)
+
 	go func() {
-		if e := grpcConnect(cfg.PortGRPC); e != nil {
+		if e := grpcConnect(ps, cfg.PortGRPC); e != nil {
 			log.Error("error connecting to gRPC: ", e.Error())
 		}
 	}()
+		
 	go func() {
 		for {
-			er := client.Read(c)
+			er := client.Read(fromRedis)
 			if er != nil {
 				log.Error("error reading from redis streams:", er.Error())
 			}
 		}
 	}()
+	// todo: waitgroup
 	wait := make(chan bool)
 	<-wait
 }
 
-func grpcConnect(port string) error {
+func grpcConnect(server *rpc.PriceStream, port string) error {
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		return err
 	}
 
 	s := grpc.NewServer()
-	server := rpc.PriceStream{}
 	pb.RegisterPriceServiceServer(s, server)
 	er := s.Serve(lis)
 	if er != nil {
