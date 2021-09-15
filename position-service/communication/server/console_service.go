@@ -28,15 +28,14 @@ func (p ProfitAndLoss) GetProfitAndLoss(ctx context.Context, req *pb.ProfitAndLo
 		return &pb.ProfitAndLossResponse{}, err
 	}
 
-	var key string
-	switch pb.ProfitAndLossRequestPosition_value[key] {
-	case pb.ProfitAndLossRequestPosition_value["OPEN"]:
+	switch req.Position.String() {
+	case "OPEN":
 		return getPnLForOpen(req, generatedPrice), nil
-	case pb.ProfitAndLossRequestPosition_value["CLOSE"]:
+	case "CLOSE":
 		return getPnLForClosed(req), nil
+	default:
+		return &pb.ProfitAndLossResponse{}, nil
 	}
-
-	return &pb.ProfitAndLossResponse{}, nil
 }
 
 func getPnLForOpen(req *pb.ProfitAndLossRequest, generatedPrice models.Price) *pb.ProfitAndLossResponse {
