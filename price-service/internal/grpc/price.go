@@ -18,11 +18,6 @@ func NewPriceStream(fromRedis chan models.Price) *PriceStream {
 }
 
 func (p PriceStream) StreamPrice(req *pb.PriceRequest, stream pb.PriceService_StreamPriceServer) error {
-	// var m []models.Price
-	// p := <- 
-	// for i := 0; i < 9; i++ {
-	// 	m = append(m, GeneratePrice("apple"))
-	// }
 	for price := range p.fromRedis {
 		if err := stream.Send(&pb.PriceResponse{
 			Id:          price.ID.String(),

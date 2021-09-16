@@ -70,8 +70,8 @@ func (p *GetPriceService) GetPrice(ctx context.Context, client pbclient.PriceSer
 }
 
 // GetLatestPrice returns latest price recieved from price-service
-func (p *GetPriceService) GetLatestPrice() (models.Price, error) {
-	price, ok := p.LatestPrice["latest"]
+func (p *GetPriceService) GetLatestPrice(companyName string) (models.Price, error) {
+	price, ok := p.LatestPrice[companyName]
 	if !ok {
 		return models.Price{}, errors.New("no prices recieved!")
 	}

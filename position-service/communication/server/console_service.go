@@ -23,7 +23,7 @@ func NewProfitAndLoss(cl client.GetPriceService) (p ProfitAndLoss) {
 }
 
 func (p ProfitAndLoss) GetProfitAndLoss(ctx context.Context, req *pb.ProfitAndLossRequest) (*pb.ProfitAndLossResponse, error) {
-	generatedPrice, err := p.cl.GetLatestPrice()
+	generatedPrice, err := p.cl.GetLatestPrice(req.CompanyName)
 	if err != nil {
 		return &pb.ProfitAndLossResponse{}, err
 	}

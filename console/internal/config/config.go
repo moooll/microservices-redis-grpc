@@ -1,5 +1,6 @@
 package config
 
 type Config struct {
-	GRPC string `env:"GRPC"`
+	GRPCPosition string `env:"GRPC_POSITION_SERVICE"`
+	GRPCPrice string `env:"GRPC_PRICE_SERVICE"`
 }

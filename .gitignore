@@ -5,6 +5,6 @@ price-service/.vscode
 .DS_Store
 .golangci
 __debug_bin
-console
+
 
 
