@@ -1,3 +1,4 @@
+// Package server contains tools for gRPC interacton with ConsoleService as a server 
 package server
 
 import (
@@ -9,6 +10,7 @@ import (
 	pb "github.com/moooll/microservices-redis-grpc/position-service/protocol"
 )
 
+// ProfitAndLoss implements pb.ProfitAndLossServer
 type ProfitAndLoss struct {
 	C chan models.Price
 	pb.UnimplementedProfitAndLossServer
@@ -22,6 +24,7 @@ func NewProfitAndLoss(cl client.GetPriceService) (p ProfitAndLoss) {
 	}
 }
 
+// GetProfitAndLoss implements pb.GetProfitAndLoss method
 func (p ProfitAndLoss) GetProfitAndLoss(ctx context.Context, req *pb.ProfitAndLossRequest) (*pb.ProfitAndLossResponse, error) {
 	generatedPrice, err := p.cl.GetLatestPrice(req.CompanyName)
 	if err != nil {

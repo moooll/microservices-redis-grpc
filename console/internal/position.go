@@ -1,3 +1,4 @@
+// Package internal contains tools and types that cannot be imported by other packages
 package internal
 
 import (
@@ -9,14 +10,16 @@ import (
 	"github.com/moooll/microservices-redis-grpc/console/internal/models"
 )
 
-type PositionOpener struct {
-	Rc    rpc.PriceReciever
+// PositionManager 
+type PositionManager struct {
+	Rc    *rpc.PriceReciever
 	Ctx   context.Context
 	Input chan Input
 	Er    chan error
 }
 
-func (po *PositionOpener) ManagePositions() {
+// ManagePositions
+func (po *PositionManager) ManagePositions() {
 	var (
 		companyName string
 		open        bool

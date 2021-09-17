@@ -5,6 +5,8 @@ price-service/.vscode
 .DS_Store
 .golangci
 __debug_bin
+position-service/internal/scripts
+position-service/internal/db
 
 
 

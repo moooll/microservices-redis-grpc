@@ -1,3 +1,4 @@
+// Package client provides tools for gRPC interaction with PriceService as a client
 package client
 
 import (
@@ -19,11 +20,8 @@ type GetPriceService struct {
 	Mu          *sync.Mutex
 }
 
-//
-func NewGetPriceService() *GetPriceService {
-	c := make(chan models.Price)
-	latestPrice := make(map[string]models.Price)
-	mu := &sync.Mutex{}
+// NewGetPriceService returns new GetPriceService
+func NewGetPriceService(c chan models.Price, latestPrice map[string]models.Price, mu *sync.Mutex) *GetPriceService {
 	return &GetPriceService{
 		C:           c,
 		LatestPrice: latestPrice,
@@ -31,6 +29,7 @@ func NewGetPriceService() *GetPriceService {
 	}
 }
 
+// GetPrice recieves prices from the PriceService via gRPC
 func (p *GetPriceService) GetPrice(ctx context.Context, client pbclient.PriceServiceClient) error {
 	var recievedPrice models.Price
 
@@ -69,11 +68,11 @@ func (p *GetPriceService) GetPrice(ctx context.Context, client pbclient.PriceSer
 	return nil
 }
 
-// GetLatestPrice returns latest price recieved from price-service
+// GetLatestPrice returns latest price recieved from the PriceService
 func (p *GetPriceService) GetLatestPrice(companyName string) (models.Price, error) {
 	price, ok := p.LatestPrice[companyName]
 	if !ok {
-		return models.Price{}, errors.New("no prices recieved!")
+		return models.Price{}, errors.New("no prices recieved")
 	}
 
 	return price, nil

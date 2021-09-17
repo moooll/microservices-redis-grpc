@@ -1,4 +1,4 @@
-// Package config contains config, such as connection strings, env variables
+// Package config contains configurations, such as connection strings, env variables
 package config
 
 // Config contains configuration strings

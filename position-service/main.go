@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"net"
+	"sync"
 
 	"github.com/caarlos0/env"
 	rpc "github.com/moooll/microservices-redis-grpc/position-service/communication/client"
 	rpcserver "github.com/moooll/microservices-redis-grpc/position-service/communication/server"
 	"github.com/moooll/microservices-redis-grpc/position-service/internal/config"
+	"github.com/moooll/microservices-redis-grpc/position-service/internal/models"
 	pbserver "github.com/moooll/microservices-redis-grpc/position-service/protocol"
 	pb "github.com/moooll/microservices-redis-grpc/price-service/protocol"
 	log "github.com/sirupsen/logrus"
@@ -27,17 +29,17 @@ func main() {
 			log.Error("error parsing config: ", e.Error())
 		}
 	}()
-
-	cl := rpc.NewGetPriceService()
+	c := make(chan models.Price)
+	latestPrice := make(map[string]models.Price)
+	cl := rpc.NewGetPriceService(c, latestPrice, &sync.Mutex{})
 	go func() {
 		if er := launchGRPCServer(cfg.GRPCServerPort, *cl); er != nil {
 			log.Error("error launching gRPC server: ", er.Error())
 		}
 	}()
 
-
 	er := cl.GetPrice(context.Background(), client)
- 	if er != nil {
+	if er != nil {
 		log.Error("error parsing config: ", er.Error())
 	}
 

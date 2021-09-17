@@ -1,3 +1,4 @@
+// Package config contains configurations strings for network connections
 package config
 
 type Config struct {

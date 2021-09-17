@@ -1,4 +1,4 @@
-// Package grpc contains utilities for connecting as grpc-client
+// Package grpc contains utilities for interacting with PriceService and PositionsService as grpc-client
 package grpc
 
 import (
@@ -56,12 +56,13 @@ func (p *PriceReciever) GetPrices(ctx context.Context, client pb.PriceServiceCli
 		p.C[price.CompanyName] = price
 		p.Mu.Unlock()
 	}
-	return nil
 }
 
 // GetLatestPrice returns latest price from PriceService
 func (p *PriceReciever) GetLatestPrice(companyName string) models.Price {
+	p.Mu.Lock()
 	pr, ok := p.C[companyName]
+	p.Mu.Unlock()
 	if !ok {
 		return models.Price{}
 	}

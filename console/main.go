@@ -46,10 +46,10 @@ func main() {
 	priceServClient := pb.NewPriceServiceClient(connPriceService)
 	c := make(map[string]models.Price)
 	r := server.NewPriceReciever(c, &sync.Mutex{})
-	go func(){
+	go func() {
 		for {
 			if e := r.GetPrices(ctx, priceServClient); e != nil {
-				log.Error("error getting prices! ", e.Error())
+				log.Error("error getting prices ", e.Error())
 			}
 		}
 	}()
@@ -57,10 +57,10 @@ func main() {
 	erchan := make(chan error)
 	inchan := make(chan internal.Input)
 
-	positionManager := &internal.PositionOpener{
-		Rc: *r,
-		Er: erchan,
-		Ctx: ctx,
+	positionManager := &internal.PositionManager{
+		Rc:    r,
+		Er:    erchan,
+		Ctx:   ctx,
 		Input: inchan,
 	}
 
@@ -81,10 +81,10 @@ func main() {
 		for e := range positionManager.Er {
 			log.Error("error scanning the input ", e.Error())
 		}
-	}() 
+	}()
 
 	wait := make(chan bool)
-	<- wait
+	<-wait
 }
 
 func grpcConnect(addr string) (*grpc.ClientConn, error) {

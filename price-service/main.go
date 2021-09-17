@@ -24,7 +24,6 @@ func main() {
 		log.Error("error parsing config: ", err.Error())
 	}
 
-	// redisConnect
 	rdb := redis.Connect(cfg.RedisURI)
 	var streams []string
 	streams = append(streams, "prices", "$")
@@ -46,7 +45,7 @@ func main() {
 			}
 		}
 	}()
-	// todo: waitgroup
+
 	wait := make(chan bool)
 	<-wait
 }

@@ -9,6 +9,8 @@ import (
 	pb "github.com/moooll/microservices-redis-grpc/position-service/protocol"
 )
 
+// GetProfitAndLoss requests ProfitAndLoss from PositionsService  
+// and returns spread for the position manipulations
 func GetProfitAndLoss(ctx context.Context, position models.Position) (models.Spread, error) {
 	c := server.ProfitAndLoss{}
 	req := &pb.ProfitAndLossRequest{
