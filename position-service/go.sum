@@ -131,8 +131,8 @@ github.com/mattn/go-colorable v0.1.6/go.mod h1:u6P/XSegPjTcexA+o6vUJrdnUu04hMope
 github.com/mattn/go-isatty v0.0.5/go.mod h1:Iq45c/XA43vh69/j3iqttzPXn0bhXyGjM0Hdxcsrc5s=
 github.com/mattn/go-isatty v0.0.7/go.mod h1:Iq45c/XA43vh69/j3iqttzPXn0bhXyGjM0Hdxcsrc5s=
 github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Kysco4FUpU=
-github.com/moooll/microservices-redis-grpc/price-service v0.0.0-20210909091247-7a7f2a11b4c8 h1:fCsV09Ui1CkTF2l6ZMkDLl4H3/5BVUoQGPDjAYYGRYM=
-github.com/moooll/microservices-redis-grpc/price-service v0.0.0-20210909091247-7a7f2a11b4c8/go.mod h1:0C5HV3+bRIINj/++aWTJD1frtLWOqvBU7Fy2U1u8wM8=
+github.com/moooll/microservices-redis-grpc/price-service v0.0.0-20210920111950-809566aa3cc3 h1:azgyjBBAvNmo6+JT+j0sR13l63G9eWFDnqZW8f07Ado=
+github.com/moooll/microservices-redis-grpc/price-service v0.0.0-20210920111950-809566aa3cc3/go.mod h1:0C5HV3+bRIINj/++aWTJD1frtLWOqvBU7Fy2U1u8wM8=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/nxadm/tail v1.4.8/go.mod h1:+ncqLTQzXmGhMZNUePPaPqPvBxHAIsmXswZKocGu+AU=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=

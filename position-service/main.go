@@ -60,7 +60,7 @@ func main() {
 	}()
 
 	go func() {
-		eer := postgresListen(context.Background(), dbConn, "notification", cfg.ServerID, server)
+		eer := postgresListen(context.Background(), dbConn, "notification", cfg.ServerID, &server)
 	if eer != nil {
 		log.Error("error listening to postgres: ", eer.Error())
 	}
@@ -102,7 +102,7 @@ func postgresConnect(ctx context.Context, addr string) (*pgx.Conn, error) {
 	return conn, nil
 }
 
-func postgresListen(ctx context.Context, conn *pgx.Conn, channame string, serverID int, server rpcserver.ProfitAndLoss) error {
+func postgresListen(ctx context.Context, conn *pgx.Conn, channame string, serverID int, server *rpcserver.ProfitAndLoss) error {
 	_, err := conn.Exec(ctx, "listen notification")
 	if err != nil {
 		return err
