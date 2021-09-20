@@ -5,12 +5,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	rpc "github.com/moooll/microservices-redis-grpc/console/internal/grpc"
 	"github.com/moooll/microservices-redis-grpc/console/internal/models"
 )
 
-// PositionManager 
+// PositionManager
 type PositionManager struct {
 	Rc    *rpc.PriceReciever
 	Ctx   context.Context
@@ -39,6 +40,7 @@ func (po *PositionManager) ManagePositions() {
 				return
 			}
 
+			time.Sleep(time.Duration(100 * time.Second))
 			generatedPrice := po.Rc.GetLatestPrice(companyName)
 			position := models.Position{}
 			if open {
@@ -54,7 +56,5 @@ func (po *PositionManager) ManagePositions() {
 
 			fmt.Println("spread:", spread.CompanyName, spread.Spread)
 		}
-
-		
 	}
 }
