@@ -7,5 +7,5 @@ import "github.com/google/uuid"
 type Price struct {
 	ID          uuid.UUID `json:"id"`
 	CompanyName string    `json:"name"`
-	Price       float32   `json:"buy_price"`
+	Price       float32   `json:"price"`
 }

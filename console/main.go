@@ -8,7 +8,7 @@ import (
 	"github.com/moooll/microservices-redis-grpc/console/internal"
 	"github.com/moooll/microservices-redis-grpc/console/internal/config"
 	server "github.com/moooll/microservices-redis-grpc/console/internal/grpc"
-	"github.com/moooll/microservices-redis-grpc/price-service/models"
+	"github.com/moooll/microservices-redis-grpc/price-generator/models"
 	posproto "github.com/moooll/microservices-redis-grpc/position-service/protocol"
 	priceproto "github.com/moooll/microservices-redis-grpc/price-service/protocol"
 	log "github.com/sirupsen/logrus"

@@ -2,7 +2,7 @@
 package grpc
 
 import (
-	"github.com/moooll/microservices-redis-grpc/price-service/internal/models"
+	"github.com/moooll/microservices-redis-grpc/price-generator/models"
 	pb "github.com/moooll/microservices-redis-grpc/price-service/protocol"
 )
 
