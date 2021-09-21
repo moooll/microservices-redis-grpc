@@ -4,7 +4,7 @@ package redis
 import (
 	"context"
 
-	"github.com/moooll/microservices-redis-grpc/price-generator/internal/models"
+	"github.com/moooll/microservices-redis-grpc/price-generator/models"
 	"github.com/pquerna/ffjson/ffjson"
 
 	redis "github.com/go-redis/redis/v8"

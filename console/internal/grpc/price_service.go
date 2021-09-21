@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	"github.com/google/uuid"
-	"github.com/moooll/microservices-redis-grpc/console/internal/models"
+	"github.com/moooll/microservices-redis-grpc/price-generator/models"
 	pb "github.com/moooll/microservices-redis-grpc/price-service/protocol"
 )
 
@@ -50,8 +50,7 @@ func (p *PriceReciever) GetPrices(ctx context.Context, client pb.PriceServiceCli
 
 		price.ID = id
 		price.CompanyName = recieved.GetCompanyName()
-		price.BuyPrice = recieved.GetBuyPrice()
-		price.SellPrice = recieved.GetSellPrice()
+		price.Price = recieved.GetPrice()
 		p.Mu.Lock()
 		p.C[price.CompanyName] = price
 		p.Mu.Unlock()

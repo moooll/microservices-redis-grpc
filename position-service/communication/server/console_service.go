@@ -29,7 +29,8 @@ func NewProfitAndLoss(cl client.GetPriceService, conn *pgx.Conn) (p ProfitAndLos
 	}
 }
 
-// GetProfitAndLoss implements pb.GetProfitAndLoss method
+// GetProfitAndLoss implements pb.GetProfitAndLoss method 
+// and returns profit and loss (or spread) for both opening and closing positions
 func (p *ProfitAndLoss) GetProfitAndLoss(ctx context.Context, req *pb.ProfitAndLossRequest) (*pb.ProfitAndLossResponse, error) {
 	generatedPrice, err := p.cl.GetLatestPrice(req.CompanyName)
 	if err != nil {

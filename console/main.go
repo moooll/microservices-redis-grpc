@@ -8,8 +8,9 @@ import (
 	"github.com/moooll/microservices-redis-grpc/console/internal"
 	"github.com/moooll/microservices-redis-grpc/console/internal/config"
 	server "github.com/moooll/microservices-redis-grpc/console/internal/grpc"
-	"github.com/moooll/microservices-redis-grpc/console/internal/models"
-	pb "github.com/moooll/microservices-redis-grpc/price-service/protocol"
+	"github.com/moooll/microservices-redis-grpc/price-service/models"
+	posproto "github.com/moooll/microservices-redis-grpc/position-service/protocol"
+	priceproto "github.com/moooll/microservices-redis-grpc/price-service/protocol"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
@@ -43,9 +44,10 @@ func main() {
 	}()
 
 	ctx := context.Background()
-	priceServClient := pb.NewPriceServiceClient(connPriceService)
+	priceServClient := priceproto.NewPriceServiceClient(connPriceService)
 	c := make(map[string]models.Price)
 	r := server.NewPriceReciever(c, &sync.Mutex{})
+
 	go func() {
 		for {
 			if e := r.GetPrices(ctx, priceServClient); e != nil {
@@ -54,6 +56,7 @@ func main() {
 		}
 	}()
 
+	posServiceClient := posproto.NewProfitAndLossClient(connPositionService)
 	erchan := make(chan error)
 	inchan := make(chan internal.Input)
 
@@ -62,9 +65,9 @@ func main() {
 		Er:    erchan,
 		Ctx:   ctx,
 		Input: inchan,
+		Cl:    posServiceClient,
 	}
 
-	// input := make(chan internal.Input)
 	go func(inchan chan internal.Input) {
 		for {
 			in := internal.ScanInput()

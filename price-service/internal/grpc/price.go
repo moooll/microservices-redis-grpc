@@ -25,8 +25,7 @@ func (p PriceStream) StreamPrice(req *pb.PriceRequest, stream pb.PriceService_St
 		if err := stream.Send(&pb.PriceResponse{
 			Id:          price.ID.String(),
 			CompanyName: price.CompanyName,
-			BuyPrice:    price.BuyPrice,
-			SellPrice:   price.SellPrice,
+			Price:       price.Price,
 		}); err != nil {
 			return err
 		}

@@ -15,6 +15,5 @@ message PriceRequest {
 message PriceResponse {
     string id = 2;
     string companyName = 3;
-    float buyPrice = 4;
-    float sellPrice = 5;
+    float price = 4;
 }

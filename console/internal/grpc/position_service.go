@@ -11,7 +11,7 @@ import (
 
 // GetProfitAndLoss requests ProfitAndLoss from PositionsService  
 // and returns spread for the position manipulations
-func GetProfitAndLoss(ctx context.Context, position models.Position) (models.Spread, error) {
+func  GetProfitAndLoss(ctx context.Context, position models.Position) (models.Spread, error) {
 	c := server.ProfitAndLoss{}
 	req := &pb.ProfitAndLossRequest{
 		Id:          position.Price.ID.String(),
@@ -20,8 +20,9 @@ func GetProfitAndLoss(ctx context.Context, position models.Position) (models.Spr
 	}
 	if position.Open {
 		req.Position = pb.ProfitAndLossRequest_Position(pb.ProfitAndLossRequest_Position_value["OPEN"])
-	} else {
+	} else {  
 		req.Position = pb.ProfitAndLossRequest_Position(pb.ProfitAndLossRequest_Position_value["CLOSE"])
+		req.SellPrice = position.Price.SellPrice
 	}
 
 	resp, err := c.GetProfitAndLoss(ctx, req)

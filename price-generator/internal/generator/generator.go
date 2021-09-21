@@ -4,7 +4,7 @@ package generator
 import (
 	"math/rand"
 
-	"github.com/moooll/microservices-redis-grpc/price-generator/internal/models"
+	"github.com/moooll/microservices-redis-grpc/price-generator/models"
 
 	"github.com/google/uuid"
 )
@@ -15,6 +15,6 @@ func GeneratePrice(company string) (price models.Price) {
 	price = models.Price{}
 	price.ID = uuid.New()
 	price.CompanyName = company
-	price.BuyPrice = ack
+	price.Price = ack
 	return price
 }
