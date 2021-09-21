@@ -6,7 +6,7 @@ import (
 
 	"github.com/caarlos0/env/v6"
 	"github.com/moooll/microservices-redis-grpc/price-service/internal/config"
-	"github.com/moooll/microservices-redis-grpc/price-service/internal/models"
+	"github.com/moooll/microservices-redis-grpc/price-generator/models"
 	"github.com/moooll/microservices-redis-grpc/price-service/internal/redis"
 	pb "github.com/moooll/microservices-redis-grpc/price-service/protocol"
 	log "github.com/sirupsen/logrus"

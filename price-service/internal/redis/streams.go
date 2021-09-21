@@ -5,7 +5,7 @@ import (
 	"context"
 
 	"github.com/go-redis/redis"
-	"github.com/moooll/microservices-redis-grpc/price-service/models"
+	"github.com/moooll/microservices-redis-grpc/price-generator/models"
 	"github.com/pquerna/ffjson/ffjson"
 )
 

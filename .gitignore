@@ -1,11 +1,7 @@
-price-generator/.env
-price-generator/.vscode
-price-service/.env
-price-service/.vscode
-.DS_Store
-.golangci
+**/.vscode
+**/.env
+**/.DS_Store
+**/golangci
 __debug_bin
-
-
-
-
+**/Dockerfile
+docker-compose.yaml

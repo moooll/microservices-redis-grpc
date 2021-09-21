@@ -1,0 +1,57 @@
+services:
+  generator:
+    build:
+      context: ./price-generator
+    command: 
+      ./price-generator
+    env_file: 
+      - price-generator/.env
+    network: price-network
+
+  price-service:
+    build:
+      context: ./price-service
+    command:
+      ./price-service
+    ports:
+      - 10000:10000
+    env_file: 
+      - price-service/.env
+    network: price-network
+
+  position-service:
+    build:
+      context: ./position-service
+    command:
+      ./position-service
+    ports:
+      - 10001:10001
+    env_file: 
+      - position-service/.env
+    network: price-network
+
+  console:
+    build:
+      context: ./console
+    command: 
+      ./console
+    env_file:
+      - console/.env
+    network: price-network
+
+  postgres:
+    image: postgres
+    ports: 
+      - 5432:5432
+    env_file:
+      - postgres/.env
+    network: price-network
+
+  redis:
+    image: redis
+    ports: 
+      - 6379:6379  
+    network: price-network
+
+networks:
+  - price-network

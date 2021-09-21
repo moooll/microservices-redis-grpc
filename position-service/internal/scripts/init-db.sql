@@ -1,6 +1,6 @@
-create user position_admin;
-create database positions;
-grant all privileges on  positions to position_admin;
+create user $(DB_USER);
+create database $(DB_NAME);
+grant all privileges on $(DB_NAME) to $(DB_USER);
 
 drop table positions;
 create table positions(
@@ -40,14 +40,3 @@ after insert or update
 on positions
 for each row 
 execute procedure notify_posit();
-
-truncate positions;
-INSERT INTO positions(
-    id,
-    server_id,
-    company_name,
-    open,
-    buy_price,
-    sell_price,
-    pnl) 
-    VALUES('805fe1cc-4702-4dc8-a20a-d35cbfc3faa8', 1, 'apple', true, 145.0, 0, 0.05);
