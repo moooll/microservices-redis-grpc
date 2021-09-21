@@ -6,8 +6,8 @@ services:
       ./price-generator
     env_file: 
       - price-generator/.env
-    network: price-network
-
+    networks: 
+      - price-network
   price-service:
     build:
       context: ./price-service
@@ -17,8 +17,8 @@ services:
       - 10000:10000
     env_file: 
       - price-service/.env
-    network: price-network
-
+    networks: 
+      - price-network
   position-service:
     build:
       context: ./position-service
@@ -28,8 +28,8 @@ services:
       - 10001:10001
     env_file: 
       - position-service/.env
-    network: price-network
-
+    networks: 
+      - price-network
   console:
     build:
       context: ./console
@@ -37,21 +37,23 @@ services:
       ./console
     env_file:
       - console/.env
-    network: price-network
-
+    networks: 
+      - price-network
   postgres:
     image: postgres
     ports: 
       - 5432:5432
     env_file:
       - postgres/.env
-    network: price-network
-
+    networks: 
+      - price-network
   redis:
     image: redis
     ports: 
       - 6379:6379  
-    network: price-network
+    networks: 
+      - price-network
 
 networks:
-  - price-network
+  price-network:
+    driver: bridge

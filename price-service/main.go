@@ -5,18 +5,14 @@ import (
 	"net"
 
 	"github.com/caarlos0/env/v6"
-	"github.com/moooll/microservices-redis-grpc/price-service/internal/config"
 	"github.com/moooll/microservices-redis-grpc/price-generator/models"
+	"github.com/moooll/microservices-redis-grpc/price-service/internal/config"
+	rpc "github.com/moooll/microservices-redis-grpc/price-service/internal/grpc"
 	"github.com/moooll/microservices-redis-grpc/price-service/internal/redis"
 	pb "github.com/moooll/microservices-redis-grpc/price-service/protocol"
 	log "github.com/sirupsen/logrus"
-	rpc "github.com/moooll/microservices-redis-grpc/price-service/internal/grpc"
 	"google.golang.org/grpc"
 )
-
-type GRPCServer struct {
-	pb.UnimplementedPriceServiceServer
-} 
 
 func main() {
 	cfg := config.Config{}
@@ -36,7 +32,7 @@ func main() {
 			log.Error("error connecting to gRPC: ", e.Error())
 		}
 	}()
-		
+
 	go func() {
 		for {
 			er := client.Read(fromRedis)

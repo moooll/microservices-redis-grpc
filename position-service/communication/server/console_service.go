@@ -10,6 +10,7 @@ import (
 	"github.com/moooll/microservices-redis-grpc/position-service/internal"
 	"github.com/moooll/microservices-redis-grpc/position-service/internal/db"
 	"github.com/moooll/microservices-redis-grpc/position-service/internal/models"
+	prmodels "github.com/moooll/microservices-redis-grpc/price-generator/models"
 	pb "github.com/moooll/microservices-redis-grpc/position-service/protocol"
 )
 
@@ -29,7 +30,7 @@ func NewProfitAndLoss(cl client.GetPriceService, conn *pgx.Conn) (p ProfitAndLos
 	}
 }
 
-// GetProfitAndLoss implements pb.GetProfitAndLoss method 
+// GetProfitAndLoss implements pb.GetProfitAndLoss method
 // and returns profit and loss (or spread) for both opening and closing positions
 func (p *ProfitAndLoss) GetProfitAndLoss(ctx context.Context, req *pb.ProfitAndLossRequest) (*pb.ProfitAndLossResponse, error) {
 	generatedPrice, err := p.cl.GetLatestPrice(req.CompanyName)
@@ -45,7 +46,7 @@ func (p *ProfitAndLoss) GetProfitAndLoss(ctx context.Context, req *pb.ProfitAndL
 			return &pb.ProfitAndLossResponse{}, er
 		}
 
-		db.AddPosition(ctx, p.conn, models.Position{
+		errr := db.AddPosition(ctx, p.conn, models.Position{
 			ID:            id,
 			ServerID:      p.serverID,
 			CompanyName:   req.CompanyName,
@@ -54,18 +55,26 @@ func (p *ProfitAndLoss) GetProfitAndLoss(ctx context.Context, req *pb.ProfitAndL
 			ProfitAndLoss: pnl.ProfitAndLoss,
 			Open:          true,
 		})
+		if errr != nil {
+			return &pb.ProfitAndLossResponse{}, errr
+		}
+
 		return pnl, nil
 	case "CLOSE":
 		pnl := getPnLForClosed(req)
-		db.UpdPosition(ctx, p.conn, p.serverID, req.SellPrice, pnl.ProfitAndLoss)
+		ee := db.UpdPosition(ctx, p.conn, p.serverID, req.SellPrice, pnl.ProfitAndLoss)
+		if ee != nil {
+			return &pb.ProfitAndLossResponse{}, ee
+		}
+
 		return pnl, nil
 	default:
 		return &pb.ProfitAndLossResponse{}, nil
 	}
 }
 
-func getPnLForOpen(req *pb.ProfitAndLossRequest, generatedPrice models.Price) *pb.ProfitAndLossResponse {
-	pnl := internal.CalculateProfitAndLoss(req.BuyPrice, generatedPrice.BuyPrice)
+func getPnLForOpen(req *pb.ProfitAndLossRequest, generatedPrice prmodels.Price) *pb.ProfitAndLossResponse {
+	pnl := internal.CalculateProfitAndLoss(req.BuyPrice, generatedPrice.Price)
 	return &pb.ProfitAndLossResponse{
 		Id:            req.Id,
 		CompanyName:   req.CompanyName,

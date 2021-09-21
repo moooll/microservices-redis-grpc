@@ -9,19 +9,21 @@ import (
 	"sync"
 
 	"github.com/google/uuid"
-	"github.com/moooll/microservices-redis-grpc/position-service/internal/models"
+	prmodels "github.com/moooll/microservices-redis-grpc/price-generator/models"
+// 	models 	"github.com/moooll/microservices-redis-grpc/position-service/internal/models"
+
 	pbclient "github.com/moooll/microservices-redis-grpc/price-service/protocol"
 )
 
 // GetPriceService implements interface
 type GetPriceService struct {
-	C           chan models.Price
-	LatestPrice map[string]models.Price
+	C           chan prmodels.Price
+	LatestPrice map[string]prmodels.Price
 	Mu          *sync.Mutex
 }
 
 // NewGetPriceService returns new GetPriceService
-func NewGetPriceService(c chan models.Price, latestPrice map[string]models.Price, mu *sync.Mutex) *GetPriceService {
+func NewGetPriceService(c chan prmodels.Price, latestPrice map[string]prmodels.Price, mu *sync.Mutex) *GetPriceService {
 	return &GetPriceService{
 		C:           c,
 		LatestPrice: latestPrice,
@@ -29,9 +31,9 @@ func NewGetPriceService(c chan models.Price, latestPrice map[string]models.Price
 	}
 }
 
-// GetPrice recieves prices from the PriceService via gRPC
+// GetPrice receives prices from the PriceService via gRPC
 func (p *GetPriceService) GetPrice(ctx context.Context, client pbclient.PriceServiceClient) error {
-	var recievedPrice models.Price
+	var recievedPrice prmodels.Price
 
 	stream, err := client.StreamPrice(ctx, &pbclient.PriceRequest{})
 	if err != nil {
@@ -53,26 +55,25 @@ func (p *GetPriceService) GetPrice(ctx context.Context, client pbclient.PriceSer
 			return e
 		}
 
-		recievedPrice = models.Price{
+		recievedPrice = prmodels.Price{
 			ID:          id,
 			CompanyName: resp.CompanyName,
-			BuyPrice:    resp.BuyPrice,
-			SellPrice:   resp.SellPrice,
+			Price:       resp.Price,
 		}
 
 		p.Mu.Lock()
 		p.LatestPrice[resp.CompanyName] = recievedPrice
 		p.Mu.Unlock()
-		fmt.Println("recieved:", p.LatestPrice)
+		fmt.Println("received:", p.LatestPrice)
 	}
 	return nil
 }
 
-// GetLatestPrice returns latest price recieved from the PriceService
-func (p *GetPriceService) GetLatestPrice(companyName string) (models.Price, error) {
+// GetLatestPrice returns latest price received from the PriceService
+func (p *GetPriceService) GetLatestPrice(companyName string) (prmodels.Price, error) {
 	price, ok := p.LatestPrice[companyName]
 	if !ok {
-		return models.Price{}, errors.New("no prices recieved")
+		return prmodels.Price{}, errors.New("no prices received")
 	}
 
 	return price, nil

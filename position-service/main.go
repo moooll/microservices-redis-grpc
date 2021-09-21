@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"sync"
 
@@ -10,7 +11,8 @@ import (
 	rpc "github.com/moooll/microservices-redis-grpc/position-service/communication/client"
 	rpcserver "github.com/moooll/microservices-redis-grpc/position-service/communication/server"
 	"github.com/moooll/microservices-redis-grpc/position-service/internal/config"
-	"github.com/moooll/microservices-redis-grpc/position-service/internal/models"
+	prmodels "github.com/moooll/microservices-redis-grpc/price-generator/models"
+	models 	"github.com/moooll/microservices-redis-grpc/position-service/internal/models"
 	pbserver "github.com/moooll/microservices-redis-grpc/position-service/protocol"
 	pb "github.com/moooll/microservices-redis-grpc/price-service/protocol"
 	"github.com/pquerna/ffjson/ffjson"
@@ -26,7 +28,7 @@ func main() {
 
 	conn, client, er := grpcClientConnect(cfg.GRPCClientAddr)
 	if er != nil {
-		log.Error("error connecting to grpc as a client: ", er.Error()) 
+		log.Error("error connecting to grpc as a client: ", er.Error())
 	}
 
 	defer func() {
@@ -35,8 +37,8 @@ func main() {
 		}
 	}()
 
-	c := make(chan models.Price)
-	latestPrice := make(map[string]models.Price)
+	c := make(chan prmodels.Price)
+	latestPrice := make(map[string]prmodels.Price)
 
 	dbConn, e := postgresConnect(context.Background(), cfg.PgURI)
 	if e != nil {
@@ -61,9 +63,9 @@ func main() {
 
 	go func() {
 		eer := postgresListen(context.Background(), dbConn, "notification", cfg.ServerID, &server)
-	if eer != nil {
-		log.Error("error listening to postgres: ", eer.Error())
-	}
+		if eer != nil {
+			log.Error("error listening to postgres: ", eer.Error())
+		}
 	}()
 	var wait chan struct{}
 	<-wait
@@ -103,7 +105,7 @@ func postgresConnect(ctx context.Context, addr string) (*pgx.Conn, error) {
 }
 
 func postgresListen(ctx context.Context, conn *pgx.Conn, channame string, serverID int, server *rpcserver.ProfitAndLoss) error {
-	_, err := conn.Exec(ctx, "listen notification")
+	_, err := conn.Exec(ctx, "listen ", channame)
 	if err != nil {
 		return err
 	}
@@ -127,13 +129,19 @@ func postgresListen(ctx context.Context, conn *pgx.Conn, channame string, server
 			positionStatus = pbserver.ProfitAndLossRequest_Position(pbserver.ProfitAndLossRequest_Position_value["OPEN"])
 		}
 
-		server.GetProfitAndLoss(ctx, &pbserver.ProfitAndLossRequest{
+		pnl, ers := server.GetProfitAndLoss(ctx, &pbserver.ProfitAndLossRequest{
 			Id:          p.ID.String(),
 			CompanyName: p.CompanyName,
 			BuyPrice:    p.BuyPrice,
 			SellPrice:   p.SellPrice,
 			Position:    positionStatus,
 		})
+		if ers != nil {
+			return ers
+		}
+
+		fmt.Println(pnl)
+
 	}
 
 	return nil

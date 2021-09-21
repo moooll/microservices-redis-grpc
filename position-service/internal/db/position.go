@@ -1,3 +1,4 @@
+// Package db contains functions to work with database
 package db
 
 import (
@@ -7,6 +8,7 @@ import (
 	"github.com/moooll/microservices-redis-grpc/position-service/internal/models"
 )
 
+// AddPosition adds new open position to the database
 func AddPosition(ctx context.Context, conn *pgx.Conn, position models.Position) error {
 	r, err := conn.Query(ctx, `insert into positions(
 		id uuid primary key,
@@ -16,11 +18,11 @@ func AddPosition(ctx context.Context, conn *pgx.Conn, position models.Position) 
 		buy_price real,
 		sell_price real,
 		pnl real)
-		values $1, $2, $3, $4, $5, $6`, 
-		position.ID, 
+		values $1, $2, $3, $4, $5, $6`,
+		position.ID,
 		position.ServerID,
 		position.CompanyName,
-		position.Open, 
+		position.Open,
 		position.BuyPrice,
 		position.SellPrice,
 		position.ProfitAndLoss)
@@ -33,9 +35,10 @@ func AddPosition(ctx context.Context, conn *pgx.Conn, position models.Position) 
 	return nil
 }
 
+// UpdPosition marks position as closed and stores profit-and-loss and sell price
 func UpdPosition(ctx context.Context, conn *pgx.Conn, serverID int, sellPrice, pnl float32) error {
 	r, err := conn.Query(ctx, "update positions set server_id = $1 , open = false, sell_price = $2, pnl = $3", serverID, sellPrice, pnl)
-	if err != nil  {
+	if err != nil {
 		return err
 	}
 

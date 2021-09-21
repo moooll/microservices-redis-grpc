@@ -6,10 +6,10 @@ import (
 	pb "github.com/moooll/microservices-redis-grpc/price-service/protocol"
 )
 
-// PriceStream implements pb.PriceServiceServer and contains a channel to recieve from redis
+// PriceStream implements pb.PriceServiceServer and contains a channel to receive from redis
 type PriceStream struct {
-	fromRedis chan models.Price
 	pb.UnimplementedPriceServiceServer
+	fromRedis chan models.Price
 }
 
 // NewPriceStream returns new PriceStream
